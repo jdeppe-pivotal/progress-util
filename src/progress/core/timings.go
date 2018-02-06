@@ -61,9 +61,15 @@ func (this *ProgressTimings) ProcessLine(line string) {
 }
 
 func (this *ProgressTimings) Results() {
+	// First get the total so we can calculate %/test
+	total := 0.0
+	for _, v := range(*this) {
+		total += v.Duration.Seconds()
+	}
+
 	sort.Sort(this)
 	for _, v := range *this {
-		fmt.Printf("%9.3f %3d  %s\n", v.Duration.Seconds(), v.TestCount, v.TestClass)
+		fmt.Printf("%9.3f  %3d  %3.2f  %s\n", v.Duration.Seconds(), v.TestCount, (v.Duration.Seconds()/total)*100, v.TestClass)
 	}
 }
 
@@ -86,5 +92,5 @@ func (this *ProgressTimings) get(key string) (*oneTest, bool) {
 		}
 	}
 
-	return nil, false;
+	return nil, false
 }
