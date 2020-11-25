@@ -5,8 +5,8 @@ import (
 	"os"
 	"bufio"
 	"io"
+	"progress/cmd/core"
 	"strings"
-	"progress/core"
 )
 
 func main() {

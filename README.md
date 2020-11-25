@@ -17,6 +17,6 @@ Will give you the list of classes in the order run. This is helpful if you're tr
 
 ### Building
 
-    go build progress
+    go build
 
 
