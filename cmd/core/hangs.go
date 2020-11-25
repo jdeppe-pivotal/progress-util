@@ -6,14 +6,14 @@ import (
 )
 
 type ProgressHangs struct {
-	tests map[string]string
+	tests map[string][]string
 	startTime *string
 	endTime *string
 }
 
 func NewProgressHangs() *ProgressHangs {
 	ph := &ProgressHangs{}
-	ph.tests = make(map[string]string)
+	ph.tests = make(map[string][]string)
 	return ph
 }
 
@@ -30,20 +30,37 @@ func (this *ProgressHangs) ProcessLine(line string) {
 	state := parts[3]
 
 	if state == "Starting" {
-		this.tests[testName] = timeStamp
+		var val []string
+		var ok bool
+		if val, ok = this.tests[testName]; !ok {
+			val = make([]string, 0)
+		}
+
+		val = append(val, timeStamp)
+		this.tests[testName] = val
 
 		if this.startTime == nil {
 			this.startTime = &timeStamp
 		}
 	} else if state == "Completed" {
-		delete(this.tests, testName)
+		val := this.tests[testName]
+		lenVal := len(val)
+
+		if lenVal == 1 {
+			delete(this.tests, testName)
+		} else {
+			val = val[0:lenVal-1]
+			this.tests[testName] = val
+		}
 	}
 }
 
 func (this *ProgressHangs) Results() {
 	fmt.Printf("Started @ %s\n", *this.startTime)
 	for k, v := range this.tests {
-		fmt.Printf("%s  %s\n", v, k)
+		for _, t := range v {
+			fmt.Printf("%s  %s\n", t, k)
+		}
 	}
 	fmt.Printf("Ended @ %s\n", *this.endTime)
 
